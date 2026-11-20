@@ -1,3 +1,14 @@
 spring:
   application:
     name: loanstats
+  datasource:
+    url: jdbc:h2:mem:loans;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+
+loans:
+  csv:
+    path: classpath:data/loans.csv.gz
