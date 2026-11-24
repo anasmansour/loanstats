@@ -1,5 +1,6 @@
 package com.example.loanstats.repository
 
+import com.example.loanstats.model.GroupBy
 import com.example.loanstats.model.StatsFilter
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +15,9 @@ class StatsRepositoryTest(@Autowired private val repository: StatsRepository) {
 
     private fun assertDecimal(expected: String, actual: BigDecimal?) =
         assertEquals(0, BigDecimal(expected).compareTo(actual), "expected $expected but was $actual")
+
+    private fun groups(groupBy: GroupBy, filter: StatsFilter = StatsFilter()) =
+        repository.stats(filter, groupBy).map { it.group to it.count }
 
     @Test
     fun `no filters returns one overall row`() {
@@ -46,6 +50,29 @@ class StatsRepositoryTest(@Autowired private val repository: StatsRepository) {
 
         assertEquals(4, november.count)
         assertDecimal("85000", november.totalAmount)
+    }
+
+    @Test
+    fun `groups by grade in ascending order`() {
+        assertEquals(listOf("A" to 3L, "B" to 3L, "C" to 3L, "D" to 2L, "E" to 2L), groups(GroupBy.GRADE))
+    }
+
+    @Test
+    fun `groups by month chronologically`() {
+        assertEquals(listOf("2017-10" to 4L, "2017-11" to 4L, "2017-12" to 5L), groups(GroupBy.MONTH))
+    }
+
+    @Test
+    fun `groups by fico band from the lowest score up`() {
+        assertEquals(
+            listOf("Fair" to 1L, "Good" to 8L, "Very Good" to 2L, "Exceptional" to 1L, null to 1L),
+            groups(GroupBy.FICO_BAND),
+        )
+    }
+
+    @Test
+    fun `filters and groupBy work together`() {
+        assertEquals(listOf("A" to 3L, "B" to 2L, "D" to 1L), groups(GroupBy.GRADE, StatsFilter(state = "CA")))
     }
 
     @Test

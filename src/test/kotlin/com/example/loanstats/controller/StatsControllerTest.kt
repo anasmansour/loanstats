@@ -28,4 +28,14 @@ class StatsControllerTest(@Autowired context: WebApplicationContext) {
             .andExpect(jsonPath("$[0].medianRate").exists())
             .andExpect(jsonPath("$[0].avgDti").exists())
     }
+
+    @Test
+    fun `groupBy returns one row per group in ascending order`() {
+        mockMvc.perform(get("/loans/stats").param("groupBy", "grade"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.length()").value(5))
+            .andExpect(jsonPath("$[0].group").value("A"))
+            .andExpect(jsonPath("$[0].count").value(3))
+            .andExpect(jsonPath("$[4].group").value("E"))
+    }
 }
