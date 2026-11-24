@@ -1,10 +1,12 @@
 package com.example.loanstats.controller
 
+import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -37,5 +39,16 @@ class StatsControllerTest(@Autowired context: WebApplicationContext) {
             .andExpect(jsonPath("$[0].group").value("A"))
             .andExpect(jsonPath("$[0].count").value(3))
             .andExpect(jsonPath("$[4].group").value("E"))
+    }
+
+    @Test
+    fun `a bad groupBy returns a 400 problem detail that lists the allowed values`() {
+        mockMvc.perform(get("/loans/stats").param("groupBy", "color"))
+            .andExpect(status().isBadRequest)
+            .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.title").value("Invalid request"))
+            .andExpect(jsonPath("$.detail").value(containsString("'color'")))
+            .andExpect(jsonPath("$.detail").value(containsString("ficoBand")))
     }
 }
