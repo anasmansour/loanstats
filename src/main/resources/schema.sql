@@ -8,5 +8,5 @@ CREATE TABLE loans (
     addr_state     CHAR(2),
     dti            DECIMAL(10, 2),
     fico_range_low INT,
-    fico_band      VARCHAR(7)
+    fico_band      VARCHAR(20)
 );

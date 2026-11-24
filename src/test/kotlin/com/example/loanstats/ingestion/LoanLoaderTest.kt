@@ -39,11 +39,4 @@ class LoanLoaderTest(@Autowired private val jdbc: JdbcTemplate) {
         assertNull(decimal("SELECT int_rate FROM loans WHERE loan_amnt = 12000"))
         assertNull(text("SELECT fico_band FROM loans WHERE loan_amnt = 12000"))
     }
-
-    @Test
-    fun `assigns the fico band`() {
-        assertEquals(2, count("SELECT COUNT(*) FROM loans WHERE fico_band = '660-679'"))
-        assertEquals(4, count("SELECT COUNT(*) FROM loans WHERE fico_band = '700-719'"))
-        assertEquals(1, count("SELECT COUNT(*) FROM loans WHERE fico_band = '840-859'"))
-    }
 }

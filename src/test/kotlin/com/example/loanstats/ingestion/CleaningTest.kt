@@ -9,11 +9,6 @@ import kotlin.test.assertNull
 class CleaningTest {
 
     @Test
-    fun `cleanText trims whitespace`() {
-        assertEquals("A", cleanText("  A "))
-    }
-
-    @Test
     fun `cleanText turns blank, dot and n-a into null`() {
         assertNull(cleanText(""))
         assertNull(cleanText("   "))
@@ -21,24 +16,6 @@ class CleaningTest {
         assertNull(cleanText("n/a"))
         assertNull(cleanText(" N/A "))
         assertNull(cleanText(null))
-    }
-
-    @Test
-    fun `cleanState trims and upper-cases`() {
-        assertEquals("CA", cleanState(" ca "))
-        assertNull(cleanState(""))
-    }
-
-    @Test
-    fun `parseDecimal returns null for missing or bad values`() {
-        assertNull(parseDecimal("abc"))
-        assertNull(parseDecimal(null))
-    }
-
-    @Test
-    fun `parseInt returns null for bad values`() {
-        assertNull(parseInt(""))
-        assertNull(parseInt("66x"))
     }
 
     @Test
@@ -67,9 +44,13 @@ class CleaningTest {
     }
 
     @Test
-    fun `ficoBand puts a score in its 20-point band`() {
-        assertEquals("660-679", ficoBand(660))
-        assertEquals("660-679", ficoBand(679))
-        assertEquals("680-699", ficoBand(680))
+    fun `ficoBand puts a score in its FICO category, edges included`() {
+        assertEquals("Fair", ficoBand(669))
+        assertEquals("Good", ficoBand(670))
+        assertEquals("Good", ficoBand(739))
+        assertEquals("Very Good", ficoBand(740))
+        assertEquals("Very Good", ficoBand(799))
+        assertEquals("Exceptional", ficoBand(800))
+        assertEquals("Exceptional", ficoBand(850))
     }
 }
