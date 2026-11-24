@@ -18,5 +18,6 @@ class StatsController(private val service: StatsService) {
         @RequestParam(required = false) state: String?,
         @RequestParam(required = false) grade: String?,
         @RequestParam(required = false) ficoBand: String?,
-    ): List<StatsRow> = service.stats(start, end, state, grade, ficoBand)
+        @RequestParam(required = false) groupBy: String?,
+    ): List<StatsRow> = service.stats(start, end, state, grade, ficoBand, groupBy)
 }

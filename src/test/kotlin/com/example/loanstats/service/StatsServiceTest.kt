@@ -14,7 +14,7 @@ class StatsServiceTest(@Autowired private val service: StatsService) {
         state: String? = null,
         grade: String? = null,
         ficoBand: String? = null,
-    ) = service.stats(start, end, state, grade, ficoBand)
+    ) = service.stats(start, end, state, grade, ficoBand, null)
 
     @Test
     fun `state and grade are accepted in any case and blank means no filter`() {

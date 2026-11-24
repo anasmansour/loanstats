@@ -1,5 +1,6 @@
 package com.example.loanstats.repository
 
+import com.example.loanstats.model.GroupBy
 import com.example.loanstats.model.StatsFilter
 import com.example.loanstats.model.StatsRow
 import org.springframework.jdbc.core.RowMapper
@@ -22,7 +23,7 @@ private val STATS_ROW_MAPPER = RowMapper { rs, _ ->
 @Repository
 class StatsRepository(private val jdbc: NamedParameterJdbcTemplate) {
 
-    fun stats(filter: StatsFilter): List<StatsRow> {
+    fun stats(filter: StatsFilter, groupBy: GroupBy? = null): List<StatsRow> {
         val conditions = mutableListOf<String>()
         val params = MapSqlParameterSource()
 
@@ -34,8 +35,11 @@ class StatsRepository(private val jdbc: NamedParameterJdbcTemplate) {
 
         val where = if (conditions.isEmpty()) "" else "WHERE " + conditions.joinToString(" AND ")
 
+        val groupKey = groupBy?.sql ?: "NULL"
+        val groupClause = groupBy?.let { "GROUP BY ${it.sql} ORDER BY ${it.orderBy}" } ?: ""
+
         val sql = """
-            SELECT NULL                          AS group_key,
+            SELECT $groupKey AS group_key,
                    COUNT(*)                      AS count,
                    SUM(loan_amnt)                AS total_amount,
                    ROUND(AVG(loan_amnt), 2)      AS avg_amount,
@@ -44,6 +48,7 @@ class StatsRepository(private val jdbc: NamedParameterJdbcTemplate) {
                    ROUND(AVG(dti), 2)            AS avg_dti
             FROM loans
             $where
+            $groupClause
         """
 
         return jdbc.query(sql, params, STATS_ROW_MAPPER)
