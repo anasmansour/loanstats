@@ -7,13 +7,15 @@ Kotlin, Spring Boot 4, plain Spring JDBC, in-memory H2.
 
 ## How to Run
 
-You need JDK 17 or newer. Nothing else required: no database, no unzip.
+You need **JDK 17** (check with `java -version`; IntelliJ can download one), Nothing else required: no database, no unzip.
 
 ```
+git clone https://github.com/anasmansour/loanstats.git
+cd loanstats
 ./gradlew bootRun
 ```
 
-Wait for the log line `Loaded x of x rows` (about 15 seconds), then open
+Wait for the log line `Loaded 118636 of 118638 rows` (about 15 seconds; until then the API returns empty results), then open
 **http://localhost:8080/swagger-ui.html**
 
 Tests:
